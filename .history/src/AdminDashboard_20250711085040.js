@@ -252,16 +252,16 @@ function AdminDashboard() {
         <tbody>
           {players.map(player => (
             <tr key={player.id}>
-              <td data-label="שם">
+              <td>
                 {player.photo_url ? <img src={player.photo_url} alt={player.name_hebrew} style={{ width: '30px', height: '30px', borderRadius: '50%', marginLeft: '10px' }} /> : null}
                 {player.name_hebrew}
               </td>
-              <td data-label="סוג פציעה">{player.injury_type_hebrew}</td>
-              <td data-label="תאריך פציעה">{player.injury_date}</td>
-              <td data-label="תאריך חזרה">{player.recovery_date || 'טרם חזר'}</td>
-              <td data-label="סטטוס">{player.status === 'injured' ? 'פצוע' : 'החלים'}</td>
-              <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
-              <td data-label="פעולות">
+              <td>{player.injury_type_hebrew}</td>
+              <td>{player.injury_date}</td>
+              <td>{player.recovery_date || 'טרם חזר'}</td>
+              <td>{player.status === 'injured' ? 'פצוע' : 'החלים'}</td>
+              <td>{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
+              <td>
                 <button onClick={() => setEditingPlayer(player)}>ערוך</button>
                 <button onClick={() => deletePlayer(player.id)}>מחק</button>
                 {player.status === 'injured' && (
