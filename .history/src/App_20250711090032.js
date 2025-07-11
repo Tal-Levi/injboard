@@ -43,6 +43,7 @@ function App() {
   const indexOfFirstPlayer = indexOfLastPlayer - playersPerPage;
   const currentPlayers = players.slice(indexOfFirstPlayer, indexOfLastPlayer);
   const totalPages = Math.ceil(players.length / playersPerPage);
+
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
   const calculateInjuryDuration = (player) => {

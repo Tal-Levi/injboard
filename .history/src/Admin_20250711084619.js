@@ -3,7 +3,6 @@ import { supabase } from './supabaseClient';
 import bcrypt from 'bcryptjs';
 import { useNavigate } from 'react-router-dom';
 
-
 function Admin() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
