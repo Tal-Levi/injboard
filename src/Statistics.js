@@ -35,7 +35,7 @@ function Statistics() {
     const totalInjuredPlayersThisYear = playersThisYear.length;
 
     const recoveredPlayersThisYear = allPlayersForStats.filter(player =>
-      player.recovery_date && new Date(player.recovery_date).getFullYear() === currentYear
+      player.recovery_date && new Date(player.recovery_date).getFullYear() === currentYear && player.status === 'recovered'
     );
     const totalRecoveredPlayersThisYear = recoveredPlayersThisYear.length;
 

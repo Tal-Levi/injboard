@@ -4,6 +4,7 @@ import { supabase } from './supabaseClient';
 function RecoveredPlayers() {
   const [recoveredPlayers, setRecoveredPlayers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
+  const [selectedPlayer, setSelectedPlayer] = useState(null); // New state for modal
   const playersPerPage = 10;
 
   useEffect(() => {
@@ -37,6 +38,51 @@ function RecoveredPlayers() {
 
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
+  // New function to calculate injury duration (copied from App.js)
+  const calculateInjuryDuration = (player) => {
+    if (player.injury_date && player.recovery_date) {
+      const injuryDate = new Date(player.injury_date);
+      const recoveryDate = new Date(player.recovery_date);
+      const diffTime = Math.abs(recoveryDate - injuryDate);
+      return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    }
+    return 0;
+  };
+
+  // PlayerModal component (copied from App.js)
+  const PlayerModal = ({ player, onClose }) => {
+    if (!player) return null;
+
+    return (
+      <div className="player-modal-overlay" onClick={onClose}>
+        <div className="player-modal" onClick={(e) => e.stopPropagation()}>
+          <button className="player-modal-close" onClick={onClose}>×</button>
+          {player.photo_url && (
+            <div 
+              className="player-modal-image" 
+              style={{ backgroundImage: `url(${player.photo_url})` }}
+            />
+          )}
+          <div className="player-modal-details">
+            <h2>{player.name_hebrew}</h2>
+            <p><strong>סוג פציעה:</strong> {player.injury_type_hebrew}</p>
+            <p><strong>תאריך פציעה:</strong> {player.injury_date}</p>
+            <p><strong>ימי פציעה:</strong> {calculateInjuryDuration(player)} ימים</p>
+            <p><strong>תאריך חזרה:</strong> {player.recovery_date || 'טרם נקבע'}</p>
+            {player.article_link && (
+              <p>
+                <strong>מאמר:</strong>{' '}
+                <a href={player.article_link} target="_blank" rel="noopener noreferrer">
+                  קישור למאמר
+                </a>
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="recovered-players">
       <h2>שחקנים שהחלימו השנה</h2>
@@ -52,7 +98,7 @@ function RecoveredPlayers() {
         </thead>
         <tbody>
           {currentPlayers.map(player => (
-            <tr key={player.id}>
+            <tr key={player.id} onClick={() => setSelectedPlayer(player)} style={{ cursor: 'pointer' }}>
               <td data-label="שם">
                 {player.photo_url ? <img src={player.photo_url} alt={player.name_hebrew} style={{ width: '30px', height: '30px', borderRadius: '50%', marginLeft: '10px' }} /> : null}
                 {player.name_hebrew}
@@ -84,6 +130,12 @@ function RecoveredPlayers() {
           </button>
         ))}
       </div>
+      {selectedPlayer && (
+        <PlayerModal 
+          player={selectedPlayer} 
+          onClose={() => setSelectedPlayer(null)} 
+        />
+      )}
     </div>
   );
 }
