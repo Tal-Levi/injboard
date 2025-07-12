@@ -197,7 +197,7 @@ function AdminDashboard() {
           onBlur={(e) => (e.target.type = 'text')}
           name="injury_date"
           max={new Date().toISOString().slice(0, 10)}
-          value={editingPlayer ? (editingPlayer.injury_date ? editingPlayer.injury_date.slice(0, 10) : '') : (newPlayer.injury_date || new Date().toISOString().slice(0, 10))}
+          value={editingPlayer ? (editingPlayer.injury_date ? editingPlayer.injury_date.slice(0, 10) : '') : (newPlayer.injury_date || '')}
           onChange={handleInputChange}
           required
         />
