@@ -352,9 +352,12 @@ nav a:hover {
   }
 
   nav a, nav button {
-    margin: 5px 0;
+    margin: 5px 0; /* Adjusted for more vertical space */
     padding: 8px 15px;
     font-size: 14px;
+    width: calc(100% - 20px); /* Ensure links take full width with padding */
+    box-sizing: border-box;
+    text-align: center;
   }
 
   .login-box {
