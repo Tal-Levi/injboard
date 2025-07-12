@@ -111,7 +111,7 @@ function App() {
               <button onClick={handleLogout} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', fontWeight: 'bold', padding: '8px 15px' }}>התנתק</button>
             </>
           ) : (
-            <Link to="/admin">כניסת מנהל</Link>
+            null
           )}
         </nav>
         <Routes>
