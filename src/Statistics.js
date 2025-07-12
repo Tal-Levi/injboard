@@ -32,7 +32,10 @@ function Statistics() {
       player.injury_date && new Date(player.injury_date).getFullYear() === currentYear
     );
     
-    const totalInjuredPlayersThisYear = playersThisYear.length;
+    const totalInjuriesThisYear = playersThisYear.length;
+
+    const uniqueInjuredPlayers = new Set(playersThisYear.map(player => player.name_hebrew));
+    const totalUniqueInjuredPlayersThisYear = uniqueInjuredPlayers.size;
 
     const recoveredPlayersThisYear = allPlayersForStats.filter(player =>
       player.recovery_date && new Date(player.recovery_date).getFullYear() === currentYear && player.status === 'recovered'
@@ -105,7 +108,8 @@ function Statistics() {
     const monthLabels = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 
     return { 
-      totalInjuredPlayersThisYear, 
+      totalInjuriesThisYear, 
+      totalUniqueInjuredPlayersThisYear,
       totalInjuredDays, 
       injuryLabels, 
       injuryCounts, 
@@ -130,7 +134,9 @@ function Statistics() {
     avgRecoveryLabels, 
     avgRecoveryDays, 
     monthLabels, 
-    monthlyInjuries 
+    monthlyInjuries, 
+    totalInjuriesThisYear, 
+    totalUniqueInjuredPlayersThisYear
   } = getStats();
 
   const pieChartData = {
@@ -205,7 +211,8 @@ function Statistics() {
       <div className="statistics">
         <div className="stats-text">
           <div>
-            <p><strong>סה"כ שחקנים שנפצעו השנה:</strong> {totalInjuredPlayersThisYear}</p>
+            <p><strong>סה"כ פציעות השנה:</strong> {totalInjuriesThisYear}</p>
+            <p><strong>סה"כ שחקנים ייחודיים שנפצעו השנה:</strong> {totalUniqueInjuredPlayersThisYear}</p>
             <p><strong>סה"כ שחקנים שהחלימו השנה:</strong> {totalRecoveredPlayersThisYear}</p>
           </div>
           <div>
