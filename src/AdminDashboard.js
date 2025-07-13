@@ -10,7 +10,7 @@ function AdminDashboard() {
     injury_type_hebrew: '',
     injury_date: '',
     recovery_date: '',
-    status: 'injured',
+    status: '',
     article_link: '',
     club_estimation_hebrew: '' // New field
   });
@@ -58,6 +58,11 @@ function AdminDashboard() {
       playerToAdd.club_estimation_hebrew = null;
     }
 
+    // Set status to 'injured' if empty
+    if (playerToAdd.status === '') {
+      playerToAdd.status = 'injured';
+    }
+
     const { data, error } = await supabase.from('players').insert([playerToAdd]).select();
     if (error) {
       console.error('Error adding player:', error);
@@ -93,6 +98,11 @@ function AdminDashboard() {
     }
     if (playerToUpdate.club_estimation_hebrew === '') { // Handle new field
       playerToUpdate.club_estimation_hebrew = null;
+    }
+
+    // Set status to 'injured' if empty
+    if (playerToUpdate.status === '') {
+      playerToUpdate.status = 'injured';
     }
 
     const { error } = await supabase
@@ -185,6 +195,7 @@ function AdminDashboard() {
           <option value="מתיחת שריר">מתיחת שריר</option>
           <option value="קרע בשריר">קרע בשריר</option>
           <option value="קרע חלקי">קרע חלקי</option>
+          <option value="קרע במיניסקוס">קרע במיניסקוס</option>
           <option value="עומס בשריר">עומס בשריר</option>
           <option value="כאבים במפשעה">כאבים במפשעה</option>
           <option value="שבר בעצם">שבר בעצם</option>
@@ -220,11 +231,12 @@ function AdminDashboard() {
           value={editingPlayer ? (editingPlayer.recovery_date ? editingPlayer.recovery_date.slice(0, 10) : '') : (newPlayer.recovery_date || '')}
           onChange={handleInputChange}
         />
-        <select
+        <select      
           name="status"
           value={editingPlayer ? editingPlayer.status : newPlayer.status}
           onChange={handleInputChange}
         >
+          <option value="">בחר סטטוס</option>
           <option value="injured">פצוע</option>
           <option value="recovered">החלים</option>
         </select>
