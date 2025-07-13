@@ -77,6 +77,9 @@ function RecoveredPlayers() {
                 </a>
               </p>
             )}
+            {player.club_estimation_hebrew && (
+              <p><strong>הערכת מועדון:</strong> {player.club_estimation_hebrew}</p>
+            )}
           </div>
         </div>
       </div>
@@ -94,6 +97,7 @@ function RecoveredPlayers() {
             <th>תאריך פציעה</th>
             <th>תאריך חזרה</th>
             <th>מאמר</th>
+            <th>הערכת מועדון</th> {/* New table header */}
           </tr>
         </thead>
         <tbody>
@@ -107,6 +111,7 @@ function RecoveredPlayers() {
               <td data-label="תאריך פציעה">{player.injury_date}</td>
               <td data-label="תאריך חזרה">{player.recovery_date || 'טרם חזר'}</td>
               <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
+              <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td> {/* Display new field */}
             </tr>
           ))}
         </tbody>

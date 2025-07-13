@@ -11,7 +11,8 @@ function AdminDashboard() {
     injury_date: '',
     recovery_date: '',
     status: 'injured',
-    article_link: ''
+    article_link: '',
+    club_estimation_hebrew: '' // New field
   });
   const [editingPlayer, setEditingPlayer] = useState(null); // State to hold player being edited
 
@@ -53,6 +54,9 @@ function AdminDashboard() {
     if (playerToAdd.article_link === '') {
       playerToAdd.article_link = null; 
     }
+    if (playerToAdd.club_estimation_hebrew === '') { // Handle new field
+      playerToAdd.club_estimation_hebrew = null;
+    }
 
     const { data, error } = await supabase.from('players').insert([playerToAdd]).select();
     if (error) {
@@ -66,7 +70,8 @@ function AdminDashboard() {
         injury_date: '',
         recovery_date: '',
         status: 'injured',
-        article_link: ''
+        article_link: '',
+        club_estimation_hebrew: '' // Reset new field
       });
       fetchPlayers(); // Re-fetch to update count and ensure fresh data
     }
@@ -85,6 +90,9 @@ function AdminDashboard() {
     }
     if (playerToUpdate.article_link === '') {
       playerToUpdate.article_link = null; 
+    }
+    if (playerToUpdate.club_estimation_hebrew === '') { // Handle new field
+      playerToUpdate.club_estimation_hebrew = null;
     }
 
     const { error } = await supabase
@@ -180,6 +188,7 @@ function AdminDashboard() {
           <option value="עומס בשריר">עומס בשריר</option>
           <option value="כאבים במפשעה">כאבים במפשעה</option>
           <option value="שבר בעצם">שבר בעצם</option>
+          <option value="שריר החשק">שריר החשק</option>
           <option value="נקע בקרסול">נקע בקרסול</option>
           <option value="פגיעה בברך (ACL)">פגיעה בברך (ACL)</option>
           <option value="פגיעה בברך (MCL)">פגיעה בברך (MCL)</option>
@@ -226,6 +235,20 @@ function AdminDashboard() {
           value={editingPlayer ? editingPlayer.article_link : newPlayer.article_link}
           onChange={handleInputChange}
         />
+        <select
+          name="club_estimation_hebrew" // New select field
+          value={editingPlayer ? editingPlayer.club_estimation_hebrew : newPlayer.club_estimation_hebrew}
+          onChange={handleInputChange}
+        >
+          <option value="">הערכת מועדון (אופציונלי)</option>
+          <option value="מספר ימים">מספר ימים</option>
+          <option value="שבוע">שבוע</option>
+          <option value="שבועיים">שבועיים</option>
+          <option value="מספר שבועות">מספר שבועות</option>
+          <option value="חודש">חודש</option>
+          <option value="חצי שנה">חצי שנה</option>
+          <option value="לא ידוע">לא ידוע</option>
+        </select>
         {editingPlayer ? (
           <div>
             <button onClick={updatePlayer}>עדכן שחקן</button>
@@ -244,6 +267,7 @@ function AdminDashboard() {
             <th>סוג פציעה</th>
             <th>תאריך פציעה</th>
             <th>תאריך חזרה</th>
+            <th>הערכת מועדון</th> {/* New table header */}
             <th>סטטוס</th>
             <th>מאמר</th>
             <th>פעולות</th>
@@ -259,6 +283,7 @@ function AdminDashboard() {
               <td data-label="סוג פציעה">{player.injury_type_hebrew}</td>
               <td data-label="תאריך פציעה">{player.injury_date}</td>
               <td data-label="תאריך חזרה">{player.recovery_date || 'טרם חזר'}</td>
+              <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td> {/* Display new field */}
               <td data-label="סטטוס">{player.status === 'injured' ? 'פצוע' : 'החלים'}</td>
               <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
               <td data-label="פעולות">

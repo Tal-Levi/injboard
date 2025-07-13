@@ -82,6 +82,9 @@ function App() {
                 </a>
               </p>
             )}
+            {player.club_estimation_hebrew && (
+              <p><strong>הערכת מועדון:</strong> {player.club_estimation_hebrew}</p>
+            )}
           </div>
         </div>
       </div>
@@ -129,6 +132,7 @@ function App() {
                     <th>סוג פציעה</th>
                     <th>תאריך פציעה</th>
                     <th>תאריך חזרה</th>
+                    <th>הערכת מועדון</th> {/* New table header */}
                     <th>מאמר</th>
                   </tr>
                 </thead>
@@ -136,12 +140,19 @@ function App() {
                   {currentPlayers.map(player => (
                     <tr key={player.id} onClick={() => setSelectedPlayer(player)} style={{ cursor: 'pointer' }}>
                       <td data-label="שם">
-                        {player.photo_url ? <img src={player.photo_url} alt={player.name_hebrew} style={{ width: '30px', height: '30px', borderRadius: '50%', marginLeft: '10px' }} /> : null}
+                        {player.photo_url ? 
+                          <img src={player.photo_url} alt={player.name_hebrew} style={{ width: '30px', height: '30px', borderRadius: '50%', marginLeft: '10px' }} /> 
+                          : 
+                          <div style={{ width: '30px', height: '30px', borderRadius: '50%', backgroundColor: '#ccc', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 'bold', marginLeft: '10px' }}>
+                            {player.name_hebrew ? player.name_hebrew.charAt(0) : ''}
+                          </div>
+                        }
                         {player.name_hebrew}
                       </td>
                       <td data-label="סוג פציעה">{player.injury_type_hebrew}</td>
                       <td data-label="תאריך פציעה">{player.injury_date}</td>
                       <td data-label="תאריך חזרה">{player.recovery_date || 'טרם חזר'}</td>
+                      <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td> {/* Display new field */}
                       <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
                     </tr>
                   ))}
