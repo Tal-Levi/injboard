@@ -28,14 +28,26 @@ function Statistics() {
   // Statistics calculations
   const getStats = () => {
     const currentYear = new Date().getFullYear();
-    const playersThisYear = allPlayersForStats.filter(player =>
+    
+    // All players with status "injured" or "recovered", regardless of date
+    const allInjuredPlayers = allPlayersForStats.filter(player => 
+      player.status === 'injured' || player.status === 'recovered'
+    );
+    
+    // Players injured this year (with injury_date in current year)
+    const playersInjuredThisYear = allPlayersForStats.filter(player =>
       player.injury_date && new Date(player.injury_date).getFullYear() === currentYear
     );
     
-    const totalInjuriesThisYear = playersThisYear.length;
+    const totalInjuriesThisYear = playersInjuredThisYear.length;
 
-    const uniqueInjuredPlayers = new Set(playersThisYear.map(player => player.name_hebrew));
+    // Total unique injured players this year by name
+    const uniqueInjuredPlayers = new Set(playersInjuredThisYear.map(player => player.name_hebrew));
     const totalUniqueInjuredPlayersThisYear = uniqueInjuredPlayers.size;
+
+    // Total players with status "injured" (current injuries)
+    const currentlyInjuredPlayers = allPlayersForStats.filter(player => player.status === 'injured');
+    const totalCurrentlyInjuredPlayers = currentlyInjuredPlayers.length;
 
     const recoveredPlayersThisYear = allPlayersForStats.filter(player =>
       player.recovery_date && new Date(player.recovery_date).getFullYear() === currentYear && player.status === 'recovered'
@@ -55,7 +67,7 @@ function Statistics() {
 
     // Calculate most common injuries
     const injuryTypes = {};
-    playersThisYear.forEach(player => {
+    allInjuredPlayers.forEach(player => {
       if (player.injury_type_hebrew) {
         injuryTypes[player.injury_type_hebrew] = (injuryTypes[player.injury_type_hebrew] || 0) + 1;
       }
@@ -66,7 +78,7 @@ function Statistics() {
 
     // Calculate most injured players by days
     const playerInjuryDays = {};
-    playersThisYear.forEach(player => {
+    allPlayersForStats.forEach(player => {
       if (player.injury_date && player.recovery_date) {
         const injuryDate = new Date(player.injury_date);
         const recoveryDate = new Date(player.recovery_date);
@@ -99,17 +111,28 @@ function Statistics() {
 
     // Calculate Injury Trends Over Months
     const monthlyInjuries = Array(12).fill(0);
-    playersThisYear.forEach(player => {
+    playersInjuredThisYear.forEach(player => {
       if (player.injury_date) {
         const month = new Date(player.injury_date).getMonth();
         monthlyInjuries[month] += 1;
       }
     });
+    
+    // Calculate Recovery Trends Over Months
+    const monthlyRecoveries = Array(12).fill(0);
+    recoveredPlayersThisYear.forEach(player => {
+      if (player.recovery_date) {
+        const month = new Date(player.recovery_date).getMonth();
+        monthlyRecoveries[month] += 1;
+      }
+    });
+    
     const monthLabels = ['ינואר', 'פברואר', 'מרץ', 'אפריל', 'מאי', 'יוני', 'יולי', 'אוגוסט', 'ספטמבר', 'אוקטובר', 'נובמבר', 'דצמבר'];
 
     return { 
       totalInjuriesThisYear, 
       totalUniqueInjuredPlayersThisYear,
+      totalCurrentlyInjuredPlayers,
       totalInjuredDays, 
       injuryLabels, 
       injuryCounts, 
@@ -119,7 +142,8 @@ function Statistics() {
       avgRecoveryLabels, 
       avgRecoveryDays, 
       monthLabels, 
-      monthlyInjuries 
+      monthlyInjuries,
+      monthlyRecoveries
     };
   };
 
@@ -134,9 +158,11 @@ function Statistics() {
     avgRecoveryLabels, 
     avgRecoveryDays, 
     monthLabels, 
-    monthlyInjuries, 
+    monthlyInjuries,
+    monthlyRecoveries,
     totalInjuriesThisYear, 
-    totalUniqueInjuredPlayersThisYear
+    totalUniqueInjuredPlayersThisYear,
+    totalCurrentlyInjuredPlayers
   } = getStats();
 
   const pieChartData = {
@@ -204,6 +230,19 @@ function Statistics() {
       },
     ],
   };
+  
+  const monthlyRecoveryChartData = {
+    labels: monthLabels,
+    datasets: [
+      {
+        label: 'החלמות לפי חודש',
+        data: monthlyRecoveries,
+        backgroundColor: 'rgba(153, 102, 255, 0.2)',
+        borderColor: 'rgba(153, 102, 255, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
 
   return (
     <div className="statistics-page">
@@ -213,6 +252,7 @@ function Statistics() {
           <div>
             <p><strong>סה"כ פציעות השנה:</strong> {totalInjuriesThisYear}</p>
             <p><strong>סה"כ שחקנים ייחודיים שנפצעו השנה:</strong> {totalUniqueInjuredPlayersThisYear}</p>
+            <p><strong>סה"כ שחקנים פצועים כרגע:</strong> {totalCurrentlyInjuredPlayers}</p>
             <p><strong>סה"כ שחקנים שהחלימו השנה:</strong> {totalRecoveredPlayersThisYear}</p>
           </div>
           <div>
@@ -265,6 +305,22 @@ function Statistics() {
               <h3>מגמות פציעות לפי חודשים</h3>
               <BarComponent 
                 data={monthlyInjuryChartData} 
+                options={{
+                  responsive: true,
+                  plugins: {
+                    legend: {
+                      position: 'bottom',
+                    },
+                  },
+                }} 
+              />
+            </div>
+          )}
+          {BarComponent && (
+            <div className="chart-wrapper">
+              <h3>מגמות החלמה לפי חודשים</h3>
+              <BarComponent 
+                data={monthlyRecoveryChartData} 
                 options={{
                   responsive: true,
                   plugins: {
