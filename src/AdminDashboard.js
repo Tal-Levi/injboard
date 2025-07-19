@@ -231,6 +231,21 @@ function AdminDashboard() {
           value={editingPlayer ? (editingPlayer.recovery_date ? editingPlayer.recovery_date.slice(0, 10) : '') : (newPlayer.recovery_date || '')}
           onChange={handleInputChange}
         />
+        {(editingPlayer && editingPlayer.recovery_date) || (!editingPlayer && newPlayer.recovery_date) ? (
+          <button 
+            type="button" 
+            onClick={() => {
+              if (editingPlayer) {
+                setEditingPlayer({ ...editingPlayer, recovery_date: null });
+              } else {
+                setNewPlayer({ ...newPlayer, recovery_date: '' });
+              }
+            }}
+            style={{ marginLeft: '10px' }}
+          >
+            נקה תאריך חזרה
+          </button>
+        ) : null}
         <select      
           name="status"
           value={editingPlayer ? editingPlayer.status : newPlayer.status}

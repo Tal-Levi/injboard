@@ -79,10 +79,10 @@ function Statistics() {
     // Calculate most injured players by days
     const playerInjuryDays = {};
     allPlayersForStats.forEach(player => {
-      if (player.injury_date && player.recovery_date) {
+      if (player.injury_date) {
         const injuryDate = new Date(player.injury_date);
-        const recoveryDate = new Date(player.recovery_date);
-        const diffTime = Math.abs(recoveryDate - injuryDate);
+        const endDate = player.recovery_date ? new Date(player.recovery_date) : new Date();
+        const diffTime = Math.abs(endDate - injuryDate);
         const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
         playerInjuryDays[player.name_hebrew] = (playerInjuryDays[player.name_hebrew] || 0) + diffDays;
       }
