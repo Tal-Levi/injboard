@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from './supabaseClient';
+import { calculateMissedMatches } from './utils/matchesUtils';
 
 function RecoveredPlayers() {
   const [recoveredPlayers, setRecoveredPlayers] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPlayer, setSelectedPlayer] = useState(null); // New state for modal
+  const [missedMatchesMap, setMissedMatchesMap] = useState({});
   const playersPerPage = 10;
 
   useEffect(() => {
@@ -24,6 +26,13 @@ function RecoveredPlayers() {
         console.error('Error fetching recovered players:', error);
       } else {
         setRecoveredPlayers(data);
+
+        // Calculate missed matches for each player
+        const missedMatchesData = {};
+        for (const player of data) {
+          missedMatchesData[player.id] = await calculateMissedMatches(player);
+        }
+        setMissedMatchesMap(missedMatchesData);
       }
     };
 
@@ -96,6 +105,7 @@ function RecoveredPlayers() {
             <th>סוג פציעה</th>
             <th>תאריך פציעה</th>
             <th>תאריך חזרה</th>
+            <th>משחקים שהוחמצו</th>
             <th>מאמר</th>
             <th>הערכת מועדון</th> {/* New table header */}
           </tr>
@@ -110,6 +120,7 @@ function RecoveredPlayers() {
               <td data-label="סוג פציעה">{player.injury_type_hebrew}</td>
               <td data-label="תאריך פציעה">{player.injury_date}</td>
               <td data-label="תאריך חזרה">{player.recovery_date || 'טרם חזר'}</td>
+              <td data-label="משחקים שהוחמצו">{missedMatchesMap[player.id] || 0}</td>
               <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
               <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td> {/* Display new field */}
             </tr>

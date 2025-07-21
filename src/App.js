@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { calculateMissedMatches } from './utils/matchesUtils';
 import Admin from './Admin';
 import AdminDashboard from './AdminDashboard';
 import RecoveredPlayers from './RecoveredPlayers';
@@ -14,6 +15,7 @@ function App() {
   const [allPlayersForStats, setAllPlayersForStats] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [selectedPlayer, setSelectedPlayer] = useState(null);
+  const [missedMatchesMap, setMissedMatchesMap] = useState({});
   const playersPerPage = 10;
 
   useEffect(() => {
@@ -32,6 +34,13 @@ function App() {
         console.error('Error fetching injured players:', injuredError);
       } else {
         setPlayers(injuredData);
+
+        // Calculate missed matches for each player
+        const missedMatchesData = {};
+        for (const player of injuredData) {
+          missedMatchesData[player.id] = await calculateMissedMatches(player);
+        }
+        setMissedMatchesMap(missedMatchesData);
       }
     };
 
@@ -132,7 +141,8 @@ function App() {
                     <th>סוג פציעה</th>
                     <th>תאריך פציעה</th>
                     <th>תאריך חזרה</th>
-                    <th>הערכת מועדון</th> {/* New table header */}
+                    <th>משחקים שהוחמצו</th>
+                    <th>הערכת מועדון</th>
                     <th>מאמר</th>
                   </tr>
                 </thead>
@@ -152,7 +162,8 @@ function App() {
                       <td data-label="סוג פציעה">{player.injury_type_hebrew}</td>
                       <td data-label="תאריך פציעה">{player.injury_date}</td>
                       <td data-label="תאריך חזרה">{player.recovery_date || 'טרם חזר'}</td>
-                      <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td> {/* Display new field */}
+                      <td data-label="משחקים שהוחמצו">{missedMatchesMap[player.id] || 0}</td>
+                      <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td>
                       <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
                     </tr>
                   ))}
