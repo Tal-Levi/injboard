@@ -64,8 +64,8 @@ function Statistics() {
         // If recovery date exists, use it; otherwise use current date
         const recoveryDate = player.recovery_date ? new Date(player.recovery_date) : new Date();
         
-        // Player missed the match if match date is between injury and recovery dates
-        return matchDate >= injuryDate && matchDate <= recoveryDate;
+        // Player missed the match if match date is strictly after injury date and before/equal to recovery date
+        return matchDate > injuryDate && matchDate <= recoveryDate;
       });
       
       return missedByPlayers.length > 0;
@@ -83,7 +83,8 @@ function Statistics() {
 
       const missedMatches = allMatches.filter(match => {
         const matchDate = new Date(match.match_date);
-        return matchDate >= injuryDate && matchDate <= recoveryDate;
+        // Strictly after injury date and before/equal to recovery date
+        return matchDate > injuryDate && matchDate <= recoveryDate;
       });
 
       playerMatchesMissed[player.name_hebrew] = missedMatches.length;
