@@ -348,6 +348,52 @@ nav a:hover {
   color: #333;
 } 
 
+/* Responsive Charts */
+.statistics-page .charts-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+  justify-content: center;
+  width: 100%;
+  max-width: 100%;
+}
+
+.statistics-page .chart-wrapper {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  padding: 15px;
+  text-align: center;
+  width: 100%;
+  max-width: 100%;
+  height: 400px; /* Fixed height for consistency */
+  overflow: hidden; /* Prevent overflow */
+}
+
+.statistics-page .chart-wrapper h3 {
+  margin-bottom: 15px;
+  color: #333;
+  font-size: 16px;
+}
+
+/* Mobile Responsiveness for Charts */
+@media (max-width: 768px) {
+  .statistics-page .charts-container {
+    grid-template-columns: 1fr; /* Stack charts vertically on small screens */
+    gap: 15px;
+  }
+  
+  .statistics-page .chart-wrapper {
+    height: 300px; /* Slightly smaller on mobile */
+    padding: 10px;
+  }
+  
+  .statistics-page .chart-wrapper h3 {
+    font-size: 14px;
+    margin-bottom: 10px;
+  }
+}
+
 /* Mobile responsiveness */
 @media (max-width: 768px) {
   .App {

@@ -262,15 +262,15 @@ function Statistics() {
     ],
   };
 
-  // Add a new chart options object for better readability
+  // Update chart options for missed matches chart
   const missedMatchesChartOptions = {
     indexAxis: 'y',
     responsive: true,
-    maintainAspectRatio: false, // Allow custom sizing
+    maintainAspectRatio: false,
     layout: {
       padding: {
-        left: 20,
-        right: 20,
+        left: 10,
+        right: 10,
       }
     },
     scales: {
@@ -281,15 +281,18 @@ function Statistics() {
           text: 'מספר משחקים שהוחמצו',
           color: '#333',
           font: {
-            size: 14,
+            size: 12,
             weight: 'bold'
           }
         },
         ticks: {
           color: '#333',
           font: {
-            size: 12
-          }
+            size: 10
+          },
+          maxRotation: 0,
+          autoSkip: true,
+          autoSkipPadding: 10
         }
       },
       y: {
@@ -298,17 +301,19 @@ function Statistics() {
           text: 'שחקנים',
           color: '#333',
           font: {
-            size: 14,
+            size: 12,
             weight: 'bold'
           }
         },
         ticks: {
           color: '#333',
           font: {
-            size: 12,
-            family: 'Arial, sans-serif' // Use a font that supports Hebrew
+            size: 10,
+            family: 'Arial, sans-serif'
           },
-          padding: 10
+          padding: 5,
+          autoSkip: true,
+          autoSkipPadding: 10
         }
       }
     },
@@ -318,7 +323,7 @@ function Statistics() {
         labels: {
           color: '#333',
           font: {
-            size: 14
+            size: 12
           }
         }
       },
@@ -327,11 +332,11 @@ function Statistics() {
         titleColor: 'white',
         bodyColor: 'white',
         titleFont: {
-          size: 14,
+          size: 12,
           weight: 'bold'
         },
         bodyFont: {
-          size: 12
+          size: 10
         }
       }
     }
@@ -351,15 +356,15 @@ function Statistics() {
     ],
   };
 
-  // Add chart options for injury days chart
+  // Update chart options for injury days chart
   const injuryDaysChartOptions = {
     indexAxis: 'y',
     responsive: true,
-    maintainAspectRatio: false, // Allow custom sizing
+    maintainAspectRatio: false,
     layout: {
       padding: {
-        left: 20,
-        right: 20,
+        left: 10,
+        right: 10,
       }
     },
     scales: {
@@ -370,15 +375,18 @@ function Statistics() {
           text: 'ימי פציעה',
           color: '#333',
           font: {
-            size: 14,
+            size: 12,
             weight: 'bold'
           }
         },
         ticks: {
           color: '#333',
           font: {
-            size: 12
-          }
+            size: 10
+          },
+          maxRotation: 0,
+          autoSkip: true,
+          autoSkipPadding: 10
         }
       },
       y: {
@@ -387,17 +395,19 @@ function Statistics() {
           text: 'שחקנים',
           color: '#333',
           font: {
-            size: 14,
+            size: 12,
             weight: 'bold'
           }
         },
         ticks: {
           color: '#333',
           font: {
-            size: 12,
-            family: 'Arial, sans-serif' // Use a font that supports Hebrew
+            size: 10,
+            family: 'Arial, sans-serif'
           },
-          padding: 10
+          padding: 5,
+          autoSkip: true,
+          autoSkipPadding: 10
         }
       }
     },
@@ -407,7 +417,7 @@ function Statistics() {
         labels: {
           color: '#333',
           font: {
-            size: 14
+            size: 12
           }
         }
       },
@@ -416,11 +426,11 @@ function Statistics() {
         titleColor: 'white',
         bodyColor: 'white',
         titleFont: {
-          size: 14,
+          size: 12,
           weight: 'bold'
         },
         bodyFont: {
-          size: 12
+          size: 10
         }
       }
     }
@@ -489,37 +499,33 @@ function Statistics() {
             </div>
           )}
           {BarComponent && (
-            <div className="chart-wrapper" style={{
-              height: '500px', // Fixed height to ensure all names are visible
-              width: '100%',
-              position: 'relative'
-            }}>
+            <div className="chart-wrapper">
               <h3>שחקנים עם הכי הרבה ימי פציעה</h3>
-              <BarComponent 
-                data={barChartData} 
-                options={injuryDaysChartOptions} 
-                style={{
-                  height: '100%',
-                  width: '100%'
-                }}
-              />
+              <div style={{ 
+                width: '100%', 
+                height: '100%', 
+                position: 'relative' 
+              }}>
+                <BarComponent 
+                  data={barChartData} 
+                  options={injuryDaysChartOptions} 
+                />
+              </div>
             </div>
           )}
           {BarComponent && (
-            <div className="chart-wrapper" style={{
-              height: '500px', // Fixed height to ensure all names are visible
-              width: '100%',
-              position: 'relative'
-            }}>
+            <div className="chart-wrapper">
               <h3>משחקים שהוחמצו על ידי שחקנים</h3>
-              <BarComponent 
-                data={missedMatchesChartData} 
-                options={missedMatchesChartOptions} 
-                style={{
-                  height: '100%',
-                  width: '100%'
-                }}
-              />
+              <div style={{ 
+                width: '100%', 
+                height: '100%', 
+                position: 'relative' 
+              }}>
+                <BarComponent 
+                  data={missedMatchesChartData} 
+                  options={missedMatchesChartOptions} 
+                />
+              </div>
             </div>
           )}
           {BarComponent && (
