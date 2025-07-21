@@ -3,6 +3,7 @@ import { supabase } from './supabaseClient';
 
 function Statistics() {
   const [allPlayersForStats, setAllPlayersForStats] = useState([]);
+  const [allMatches, setAllMatches] = useState([]);
   const [PieComponent, setPieComponent] = useState(null);
   const [BarComponent, setBarComponent] = useState(null);
 
@@ -13,16 +14,25 @@ function Statistics() {
       setBarComponent(() => module.Bar);
     });
 
-    const fetchPlayers = async () => {
-      const { data: allData, error: allError } = await supabase.from('players').select('*');
-      if (allError) {
-        console.error('Error fetching all players for stats:', allError);
+    const fetchData = async () => {
+      // Fetch players
+      const { data: playersData, error: playersError } = await supabase.from('players').select('*');
+      if (playersError) {
+        console.error('Error fetching all players for stats:', playersError);
       } else {
-        setAllPlayersForStats(allData);
+        setAllPlayersForStats(playersData);
+      }
+
+      // Fetch matches
+      const { data: matchesData, error: matchesError } = await supabase.from('matches').select('*');
+      if (matchesError) {
+        console.error('Error fetching matches:', matchesError);
+      } else {
+        setAllMatches(matchesData);
       }
     };
 
-    fetchPlayers();
+    fetchData();
   }, []);
 
   // Statistics calculations
@@ -40,6 +50,47 @@ function Statistics() {
     );
     
     const totalInjuriesThisYear = playersInjuredThisYear.length;
+
+    // Calculate matches missed by injured players
+    const matchesMissedByInjuredPlayers = allMatches.filter(match => {
+      const matchDate = new Date(match.match_date);
+      
+      // Find players who were injured during this match
+      const missedByPlayers = allInjuredPlayers.filter(player => {
+        // If player has no injury or recovery date, they didn't miss the match
+        if (!player.injury_date) return false;
+        
+        const injuryDate = new Date(player.injury_date);
+        // If recovery date exists, use it; otherwise use current date
+        const recoveryDate = player.recovery_date ? new Date(player.recovery_date) : new Date();
+        
+        // Player missed the match if match date is between injury and recovery dates
+        return matchDate >= injuryDate && matchDate <= recoveryDate;
+      });
+      
+      return missedByPlayers.length > 0;
+    });
+
+    const totalMatchesMissedThisYear = matchesMissedByInjuredPlayers.length;
+
+    // Calculate matches missed per player
+    const playerMatchesMissed = {};
+    allInjuredPlayers.forEach(player => {
+      if (!player.injury_date) return;
+
+      const injuryDate = new Date(player.injury_date);
+      const recoveryDate = player.recovery_date ? new Date(player.recovery_date) : new Date();
+
+      const missedMatches = allMatches.filter(match => {
+        const matchDate = new Date(match.match_date);
+        return matchDate >= injuryDate && matchDate <= recoveryDate;
+      });
+
+      playerMatchesMissed[player.name_hebrew] = missedMatches.length;
+    });
+
+    const playerLabels = Object.keys(playerMatchesMissed);
+    const playerMissedMatches = Object.values(playerMatchesMissed);
 
     // Total unique injured players this year by name
     const uniqueInjuredPlayers = new Set(playersInjuredThisYear.map(player => player.name_hebrew));
@@ -88,7 +139,7 @@ function Statistics() {
       }
     });
 
-    const playerLabels = Object.keys(playerInjuryDays);
+    const playerInjuryLabels = Object.keys(playerInjuryDays);
     const playerDays = Object.values(playerInjuryDays);
 
     // Calculate Average Recovery Time by Injury Type
@@ -136,14 +187,17 @@ function Statistics() {
       totalInjuredDays, 
       injuryLabels, 
       injuryCounts, 
-      playerLabels, 
+      playerInjuryLabels, 
       playerDays, 
       totalRecoveredPlayersThisYear, 
       avgRecoveryLabels, 
       avgRecoveryDays, 
       monthLabels, 
       monthlyInjuries,
-      monthlyRecoveries
+      monthlyRecoveries,
+      totalMatchesMissedThisYear,
+      playerLabels,
+      playerMissedMatches
     };
   };
 
@@ -152,7 +206,7 @@ function Statistics() {
     totalInjuredDays, 
     injuryLabels, 
     injuryCounts, 
-    playerLabels, 
+    playerInjuryLabels, 
     playerDays, 
     totalRecoveredPlayersThisYear, 
     avgRecoveryLabels, 
@@ -162,7 +216,10 @@ function Statistics() {
     monthlyRecoveries,
     totalInjuriesThisYear, 
     totalUniqueInjuredPlayersThisYear,
-    totalCurrentlyInjuredPlayers
+    totalCurrentlyInjuredPlayers,
+    totalMatchesMissedThisYear,
+    playerLabels,
+    playerMissedMatches
   } = getStats();
 
   const pieChartData = {
@@ -192,8 +249,97 @@ function Statistics() {
     ],
   };
 
-  const barChartData = {
+  const missedMatchesChartData = {
     labels: playerLabels,
+    datasets: [
+      {
+        label: 'מספר משחקים שהוחמצו',
+        data: playerMissedMatches,
+        backgroundColor: 'rgba(255, 99, 132, 0.2)',
+        borderColor: 'rgba(255, 99, 132, 1)',
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  // Add a new chart options object for better readability
+  const missedMatchesChartOptions = {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false, // Allow custom sizing
+    layout: {
+      padding: {
+        left: 20,
+        right: 20,
+      }
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'מספר משחקים שהוחמצו',
+          color: '#333',
+          font: {
+            size: 14,
+            weight: 'bold'
+          }
+        },
+        ticks: {
+          color: '#333',
+          font: {
+            size: 12
+          }
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'שחקנים',
+          color: '#333',
+          font: {
+            size: 14,
+            weight: 'bold'
+          }
+        },
+        ticks: {
+          color: '#333',
+          font: {
+            size: 12,
+            family: 'Arial, sans-serif' // Use a font that supports Hebrew
+          },
+          padding: 10
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: '#333',
+          font: {
+            size: 14
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        titleColor: 'white',
+        bodyColor: 'white',
+        titleFont: {
+          size: 14,
+          weight: 'bold'
+        },
+        bodyFont: {
+          size: 12
+        }
+      }
+    }
+  };
+
+  // Update bar chart data for injury days
+  const barChartData = {
+    labels: playerInjuryLabels,
     datasets: [
       {
         label: 'ימי פציעה',
@@ -203,6 +349,81 @@ function Statistics() {
         borderWidth: 1,
       },
     ],
+  };
+
+  // Add chart options for injury days chart
+  const injuryDaysChartOptions = {
+    indexAxis: 'y',
+    responsive: true,
+    maintainAspectRatio: false, // Allow custom sizing
+    layout: {
+      padding: {
+        left: 20,
+        right: 20,
+      }
+    },
+    scales: {
+      x: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'ימי פציעה',
+          color: '#333',
+          font: {
+            size: 14,
+            weight: 'bold'
+          }
+        },
+        ticks: {
+          color: '#333',
+          font: {
+            size: 12
+          }
+        }
+      },
+      y: {
+        title: {
+          display: true,
+          text: 'שחקנים',
+          color: '#333',
+          font: {
+            size: 14,
+            weight: 'bold'
+          }
+        },
+        ticks: {
+          color: '#333',
+          font: {
+            size: 12,
+            family: 'Arial, sans-serif' // Use a font that supports Hebrew
+          },
+          padding: 10
+        }
+      }
+    },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: {
+          color: '#333',
+          font: {
+            size: 14
+          }
+        }
+      },
+      tooltip: {
+        backgroundColor: 'rgba(0,0,0,0.7)',
+        titleColor: 'white',
+        bodyColor: 'white',
+        titleFont: {
+          size: 14,
+          weight: 'bold'
+        },
+        bodyFont: {
+          size: 12
+        }
+      }
+    }
   };
 
   const avgRecoveryChartData = {
@@ -257,6 +478,7 @@ function Statistics() {
           </div>
           <div>
             <p><strong>סה"כ ימי פציעה מצטברים:</strong> {totalInjuredDays}</p>
+            <p><strong>סה"כ משחקים שהוחמצו השנה:</strong> {totalMatchesMissedThisYear}</p>
           </div>
         </div>
         <div className="charts-container">
@@ -267,19 +489,36 @@ function Statistics() {
             </div>
           )}
           {BarComponent && (
-            <div className="chart-wrapper">
+            <div className="chart-wrapper" style={{
+              height: '500px', // Fixed height to ensure all names are visible
+              width: '100%',
+              position: 'relative'
+            }}>
               <h3>שחקנים עם הכי הרבה ימי פציעה</h3>
               <BarComponent 
                 data={barChartData} 
-                options={{
-                  indexAxis: 'y',
-                  responsive: true,
-                  plugins: {
-                    legend: {
-                      position: 'bottom',
-                    },
-                  },
-                }} 
+                options={injuryDaysChartOptions} 
+                style={{
+                  height: '100%',
+                  width: '100%'
+                }}
+              />
+            </div>
+          )}
+          {BarComponent && (
+            <div className="chart-wrapper" style={{
+              height: '500px', // Fixed height to ensure all names are visible
+              width: '100%',
+              position: 'relative'
+            }}>
+              <h3>משחקים שהוחמצו על ידי שחקנים</h3>
+              <BarComponent 
+                data={missedMatchesChartData} 
+                options={missedMatchesChartOptions} 
+                style={{
+                  height: '100%',
+                  width: '100%'
+                }}
               />
             </div>
           )}
