@@ -201,6 +201,7 @@ function AdminDashboard() {
           <option value="שבר בעצם">שבר בעצם</option>
           <option value="שריר החשק">שריר החשק</option>
           <option value="נקע בקרסול">נקע בקרסול</option>
+          <option value="רגישות בקרסול">רגישות בקרסול</option>
           <option value="פגיעה בברך (ACL)">פגיעה בברך (ACL)</option>
           <option value="פגיעה בברך (MCL)">פגיעה בברך (MCL)</option>
           <option value="פגיעה בכתף">פגיעה בכתף</option>
