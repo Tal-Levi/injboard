@@ -83,6 +83,9 @@ function App() {
             <p><strong>תאריך פציעה:</strong> {player.injury_date}</p>
             <p><strong>ימי פציעה:</strong> {calculateInjuryDuration(player)} ימים</p>
             <p><strong>תאריך חזרה משוער:</strong> {player.recovery_date || 'טרם נקבע'}</p>
+            {player.injury_context_hebrew && (
+              <p><strong>איפה נפצע?:</strong> {player.injury_context_hebrew}</p>
+            )}
             {player.article_link && (
               <p>
                 <strong>מאמר:</strong>{' '}
@@ -144,6 +147,7 @@ function App() {
                     <th>משחקים שהוחמצו</th>
                     <th>הערכת מועדון</th>
                     <th>מאמר</th>
+                    <th>איפה נפצע?</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -165,6 +169,7 @@ function App() {
                       <td data-label="משחקים שהוחמצו">{missedMatchesMap[player.id] || 0}</td>
                       <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td>
                       <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
+                      <td data-label="איפה נפצע?">{player.injury_context_hebrew || 'אין'}</td>
                     </tr>
                   ))}
                 </tbody>

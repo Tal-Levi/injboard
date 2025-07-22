@@ -12,7 +12,8 @@ function AdminDashboard() {
     recovery_date: '',
     status: '',
     article_link: '',
-    club_estimation_hebrew: '' // New field
+    club_estimation_hebrew: '',
+    injury_context_hebrew: '' // New field
   });
   const [editingPlayer, setEditingPlayer] = useState(null); // State to hold player being edited
 
@@ -57,6 +58,9 @@ function AdminDashboard() {
     if (playerToAdd.club_estimation_hebrew === '') { // Handle new field
       playerToAdd.club_estimation_hebrew = null;
     }
+    if (playerToAdd.injury_context_hebrew === '') { // New field
+      playerToAdd.injury_context_hebrew = null;
+    }
 
     // Set status to 'injured' if empty
     if (playerToAdd.status === '') {
@@ -76,7 +80,8 @@ function AdminDashboard() {
         recovery_date: '',
         status: 'injured',
         article_link: '',
-        club_estimation_hebrew: '' // Reset new field
+        club_estimation_hebrew: '',
+        injury_context_hebrew: '' // Reset new field
       });
       fetchPlayers(); // Re-fetch to update count and ensure fresh data
     }
@@ -98,6 +103,9 @@ function AdminDashboard() {
     }
     if (playerToUpdate.club_estimation_hebrew === '') { // Handle new field
       playerToUpdate.club_estimation_hebrew = null;
+    }
+    if (playerToUpdate.injury_context_hebrew === '') { // New field
+      playerToUpdate.injury_context_hebrew = null;
     }
 
     // Set status to 'injured' if empty
@@ -277,6 +285,13 @@ function AdminDashboard() {
           <option value="חצי שנה">חצי שנה</option>
           <option value="לא ידוע">לא ידוע</option>
         </select>
+        <input
+          type="text"
+          name="injury_context_hebrew"
+          placeholder="איפה נפצע? (משחק/אימון)"
+          value={editingPlayer ? editingPlayer.injury_context_hebrew : newPlayer.injury_context_hebrew}
+          onChange={handleInputChange}
+        />
         {editingPlayer ? (
           <div>
             <button onClick={updatePlayer}>עדכן שחקן</button>
@@ -298,6 +313,7 @@ function AdminDashboard() {
             <th>הערכת מועדון</th> {/* New table header */}
             <th>סטטוס</th>
             <th>מאמר</th>
+            <th>איפה נפצע?</th>
             <th>פעולות</th>
           </tr>
         </thead>
@@ -314,6 +330,7 @@ function AdminDashboard() {
               <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td> {/* Display new field */}
               <td data-label="סטטוס">{player.status === 'injured' ? 'פצוע' : 'החלים'}</td>
               <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
+              <td data-label="איפה נפצע?">{player.injury_context_hebrew || 'אין'}</td>
               <td data-label="פעולות">
                 <button onClick={() => setEditingPlayer(player)}>ערוך</button>
                 <button onClick={() => deletePlayer(player.id)}>מחק</button>

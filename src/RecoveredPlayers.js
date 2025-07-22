@@ -78,6 +78,9 @@ function RecoveredPlayers() {
             <p><strong>תאריך פציעה:</strong> {player.injury_date}</p>
             <p><strong>ימי פציעה:</strong> {calculateInjuryDuration(player)} ימים</p>
             <p><strong>תאריך חזרה:</strong> {player.recovery_date || 'טרם נקבע'}</p>
+            {player.injury_context_hebrew && (
+              <p><strong>איפה נפצע?:</strong> {player.injury_context_hebrew}</p>
+            )}
             {player.article_link && (
               <p>
                 <strong>מאמר:</strong>{' '}
@@ -107,7 +110,8 @@ function RecoveredPlayers() {
             <th>תאריך חזרה</th>
             <th>משחקים שהוחמצו</th>
             <th>מאמר</th>
-            <th>הערכת מועדון</th> {/* New table header */}
+            <th>הערכת מועדון</th>
+            <th>איפה נפצע?</th>
           </tr>
         </thead>
         <tbody>
@@ -123,6 +127,7 @@ function RecoveredPlayers() {
               <td data-label="משחקים שהוחמצו">{missedMatchesMap[player.id] || 0}</td>
               <td data-label="מאמר">{player.article_link ? <a href={player.article_link} target="_blank" rel="noopener noreferrer">קישור</a> : 'אין'}</td>
               <td data-label="הערכת מועדון">{player.club_estimation_hebrew || 'אין'}</td> {/* Display new field */}
+              <td data-label="איפה נפצע?">{player.injury_context_hebrew || 'אין'}</td> {/* Display new field */}
             </tr>
           ))}
         </tbody>
