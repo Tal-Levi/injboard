@@ -30,7 +30,21 @@ function RecoveredPlayers() {
         // Calculate missed matches for each player
         const missedMatchesData = {};
         for (const player of data) {
-          missedMatchesData[player.id] = await calculateMissedMatches(player);
+          // Find the specific injury record for this player that is in the recovered status
+          const recoveredInjury = await supabase
+            .from('players')
+            .select('*')
+            .eq('name_hebrew', player.name_hebrew)
+            .eq('status', 'recovered')
+            .order('injury_date', { ascending: false })
+            .limit(1)
+            .single();
+
+          if (recoveredInjury.data) {
+            missedMatchesData[player.id] = await calculateMissedMatches(recoveredInjury.data);
+          } else {
+            missedMatchesData[player.id] = 0;
+          }
         }
         setMissedMatchesMap(missedMatchesData);
       }
