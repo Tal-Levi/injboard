@@ -193,31 +193,14 @@ function AdminDashboard() {
           value={editingPlayer ? editingPlayer.photo_url : newPlayer.photo_url}
           onChange={handleInputChange}
         />
-        <select
+        <input
+          type="text"
           name="injury_type_hebrew"
+          placeholder="סוג פציעה"
           value={editingPlayer ? editingPlayer.injury_type_hebrew : newPlayer.injury_type_hebrew}
           onChange={handleInputChange}
           required
-        >
-          <option value="">בחר סוג פציעה</option>
-          <option value="מתיחת שריר">מתיחת שריר</option>
-          <option value="קרע בשריר">קרע בשריר</option>
-          <option value="קרע חלקי">קרע חלקי</option>
-          <option value="קרע במיניסקוס">קרע במיניסקוס</option>
-          <option value="עומס בשריר">עומס בשריר</option>
-          <option value="כאבים במפשעה">כאבים במפשעה</option>
-          <option value="שבר בעצם">שבר בעצם</option>
-          <option value="שריר החשק">שריר החשק</option>
-          <option value="נקע בקרסול">נקע בקרסול</option>
-          <option value="רגישות בקרסול">רגישות בקרסול</option>
-          <option value="פגיעה בברך (ACL)">פגיעה בברך (ACL)</option>
-          <option value="פגיעה בברך (MCL)">פגיעה בברך (MCL)</option>
-          <option value="פגיעה בכתף">פגיעה בכתף</option>
-          <option value="זעזוע מוח">זעזוע מוח</option>
-          <option value="פגיעה במפשעה">פגיעה במפשעה</option>
-          <option value="פגיעה בגב">פגיעה בגב</option>
-          <option value="אחר">אחר</option>
-        </select>
+        />
         <input
           placeholder="תאריך פציעה"
           className="textbox-n"
@@ -271,20 +254,13 @@ function AdminDashboard() {
           value={editingPlayer ? editingPlayer.article_link : newPlayer.article_link}
           onChange={handleInputChange}
         />
-        <select
-          name="club_estimation_hebrew" // New select field
+        <input
+          type="text"
+          name="club_estimation_hebrew"
+          placeholder="הערכת מועדון (אופציונלי)"
           value={editingPlayer ? editingPlayer.club_estimation_hebrew : newPlayer.club_estimation_hebrew}
           onChange={handleInputChange}
-        >
-          <option value="">הערכת מועדון (אופציונלי)</option>
-          <option value="מספר ימים">מספר ימים</option>
-          <option value="שבוע">שבוע</option>
-          <option value="שבועיים">שבועיים</option>
-          <option value="מספר שבועות">מספר שבועות</option>
-          <option value="חודש">חודש</option>
-          <option value="חצי שנה">חצי שנה</option>
-          <option value="לא ידוע">לא ידוע</option>
-        </select>
+        />
         <input
           type="text"
           name="injury_context_hebrew"
